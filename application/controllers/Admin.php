@@ -53,10 +53,6 @@ class Admin extends CI_Controller {
 
 			$pendapatan = $investor['pendapatan'];
 
-			// if($investor['role_id']=='3' AND $investor['id_coach']=='3')
-			// 	{
-					
-			// 	}
 		}
 
 	public function updtInvestor($id)
@@ -104,6 +100,23 @@ class Admin extends CI_Controller {
 
 		
 	}
+
+	public function formBayar()
+	{
+		$queyInvestor = "SELECT * FROM `investor` WHERE `role_id`= '3' ";
+		$data['investor'] = $this->db->query($queyInvestor)->result_array();
+
+		$queyRefferal = "SELECT * FROM `investor` WHERE `id_coach`= '{$this->session->userdata('id')}' ";
+		$data['refferal'] = $this->db->query($queyRefferal)->result_array();
+		
+		$this->load->view('templates/header', $data);
+        // $this->load->view('templates/sidebar', $data);
+        // $this->load->view('templates/navbar', $data);
+		$this->load->view('member/formBayar',$data);
+		$this->load->view('templates/footer');
+		
+	}
+
 
 	public function status($nik)
     {

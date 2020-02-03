@@ -369,6 +369,17 @@
                 </div>
 
                 <div class="col-md-3">
+                <a href="<?= base_url('admin/formBayar/')?>">
+                    <div class="card">
+                      <div class="card-body">
+                        <i class="fas fa-wallet fa-5x"></i>
+                        <p style="font-weight: 600;font-size: 12px">KONFIRMASI PEMBAYARAN</p>
+                      </div>
+                    </div>
+                  </a>    
+                </div>
+
+                <div class="col-md-3">
                   <a href="">
                     <div class="card">
                       <div class="card-body">

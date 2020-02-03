@@ -1,3 +1,4 @@
+
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -19,6 +20,17 @@ class Member extends CI_Controller {
 	{
 		$data['investor'] = $this->db->get_where('investor', ['id' =>  $this->session->userdata('id')])->row_array();
 		$this->load->view('member/daftar',$data);
+		$this->load->view('templates/footer');
+	}
+
+	public function tgPembayaran()
+	{
+		$data['investor'] = $this->db->get_where('investor', ['id' =>  $this->session->userdata('id')])->row_array();
+		$this->load->view('templates/header', $data);
+        // $this->load->view('templates/sidebar', $data);
+        // $this->load->view('templates/navbar', $data);
+		$this->load->view('member/indexBayar',$data);
+		$this->load->view('templates/footer');
 	}
 
 	public function addInvestor()
@@ -147,7 +159,8 @@ class Member extends CI_Controller {
 				'id_grade4' => $id_grade4,
 				'id_grade5' => $id_grade5,
 				'id_grade6' => $id_grade6,
-				'link_coach' => $link_caoch
+				'link_coach' => $link_caoch,
+				'tunjanganCoach' => 0
 			];
 			$this->db->insert('investor', $data);
 
@@ -194,6 +207,16 @@ class Member extends CI_Controller {
         	$this->db->from('investor');
 			$totalGrade6 = $this->db->get()->num_rows();
 
+			// if($coach['role_id']=='5'){
+			// 	$tunjanganGrade = 0;
+			// }else if($coach['role_id']=='4'){
+			// 	$tunjanganGrade = 0;
+			// }else if($coach['role_id']=='3'){
+			// 	$tunjanganGrade = 400000;
+			// }
+
+			// Merubah Toplinknya
+
 			$pG1 = $totalGrade1 * 300000;
 			$pG2 = $totalGrade2 * 100000;
 			$pG3 = $totalGrade3 * 50000;
@@ -211,11 +234,21 @@ class Member extends CI_Controller {
 			$this->db->set('grade5', $totalGrade5);
 			$this->db->set('grade6', $totalGrade6);
 			$this->db->set('pendapatan', $tpendapatan);
+			
+// ****************************************************************************			
 			$this->db->where('id', $this->input->post('link_coach'));
 			$this->db->update('investor');
 
-// ****************************************************************************
-			if($coach['status_grade']=='1')
+// ******************* NEW FUNCTION ***********************************************
+			if($coach['status_grade']=='0'){
+				if($coach['role_id']==3){
+					$this->db->set('tunjanganCoach','tunjanganCoach + 400000',FALSE);
+				}else{
+					$this->db->set('tunjanganCoach','tunjanganCoach + 0',FALSE);
+				}	
+			}
+// ********************************************************************************
+			else if($coach['status_grade']=='1')
 				{
 					// Hitung Jumlah Member Grade1
 					$this->db->where('link_coach', $this->input->post('link_coach'));
@@ -225,12 +258,27 @@ class Member extends CI_Controller {
 					$t_investorG1 = $this->db->get()->num_rows();
 
 					$tpendapatanG1 = $t_investorG1 * 300000;
-					// Update data Investor
-					$this->db->set('jumlah_investor', $t_investorG1);
-					$this->db->set('pendapatan', $tpendapatanG1);
-					$this->db->where('id', $this->input->post('id'));
-					$this->db->update('investor');
 
+// ***************************** NEW FUNCTION ***************************************
+					// Update data Investor
+					if($coach['role_id']=='3'){
+						$this->db->set('jumlah_investor', $t_investorG1);
+						$this->db->set('pendapatan', $tpendapatanG1);
+						$this->db->set('tunjanganCoach', 'tunjanganCoach + 400000', FALSE);
+						$this->db->where('id', $this->input->post('id'));
+						$this->db->update('investor');
+
+						$tunjanganDirect = 5/100 * 700000;
+						$this->db->set('tunjanganCoach', "tunjanganCoach + $tunjanganDirect",FALSE);
+						$this->db->where('id', $this->input->post('id_coach'));
+						$this->db->update('investor');
+					}else{
+						$this->db->set('jumlah_investor', $t_investorG1);
+						$this->db->set('pendapatan', $tpendapatanG1);
+						$this->db->where('id', $this->input->post('id'));
+						$this->db->update('investor');
+					}
+// ****************************************************************************
 				}
 			else if ($coach['status_grade']=='2')
 				{
@@ -246,14 +294,35 @@ class Member extends CI_Controller {
 
 					// Update data Investor
 					$this->db->set('jumlah_investor', $t_investorG2);
-					$this->db->set('pendapatan', $tpendapatanG2);
-					$this->db->where('id', $this->input->post('id'));
-					$this->db->update('investor');
-
-					$this->db->set('jumlah_investor', $t_investorG2);
 					$this->db->set('pendapatan', $tpendapatanG1);
 					$this->db->where('id', $this->input->post('id_coach'));
 					$this->db->update('investor');
+
+// ***************************** NEW FUNCTION ***************************************
+					// Update data Investor
+					if($coach['role_id']=='3'){
+						$this->db->set('jumlah_investor', $t_investorG2);
+						$this->db->set('pendapatan', $tpendapatanG2);
+						$this->db->set('tunjanganCoach', 'tunjanganCoach + 400000', FALSE);
+						$this->db->where('id', $this->input->post('id'));
+						$this->db->update('investor');
+
+						$tunjanganDirect = 5/100 * 700000;
+						$this->db->set('tunjanganCoach', "tunjanganCoach + $tunjanganDirect",FALSE);
+						$this->db->where('id', $this->input->post('id_grade1'));
+						$this->db->update('investor');
+
+						$tunjanganDirect1 = 5/100 * 100000;
+						$this->db->set('tunjanganCoach' ,"tunjanganCoach + $tunjanganDirect1", FALSE);
+						$this->db->where('id', $this->input->post('link_coach'));
+						$this->db->update('investor');
+					}else{
+						$this->db->set('jumlah_investor', $t_investorG2);
+						$this->db->set('pendapatan', $tpendapatanG2);
+						$this->db->where('id', $this->input->post('id'));
+						$this->db->update('investor');
+					}
+// ****************************************************************************
 				}
 
 			else if ($coach['status_grade']=='3')
@@ -270,10 +339,36 @@ class Member extends CI_Controller {
 					$tpendapatanG3 = $t_investorG3 * 300000;
 
 					// Update data Investor
-					$this->db->set('jumlah_investor', $t_investorG3);
-					$this->db->set('pendapatan', $tpendapatanG3);
-					$this->db->where('id', $this->input->post('id'));
-					$this->db->update('investor');
+// ***************************** NEW FUNCTION ***************************************
+					// Update data Investor
+					if($coach['role_id']=='3'){
+						$this->db->set('jumlah_investor', $t_investorG3);
+						$this->db->set('pendapatan', $tpendapatanG3);
+						$this->db->set('tunjanganCoach', 'tunjanganCoach + 400000', FALSE);
+						$this->db->where('id', $this->input->post('id'));
+						$this->db->update('investor');
+
+						$tunjanganDirect = 5/100 * 700000;
+						$this->db->set('tunjanganCoach', "tunjanganCoach + $tunjanganDirect",FALSE);
+						$this->db->where('id', $this->input->post('id_grade2'));
+						$this->db->update('investor');
+
+						$tunjanganDirect1 = 5/100 * 100000;
+						$this->db->set('tunjanganCoach', "tunjanganCoach + $tunjanganDirect1", FALSE);
+						$this->db->where('id', $this->input->post('id_grade1'));
+						$this->db->update('investor');
+
+						$tunjanganDirect2 = 5/100 * 50000;
+						$this->db->set('tunjanganCoach', "tunjanganCoach + $tunjanganDirect2", FALSE);
+						$this->db->where('id', $this->input->post('link_coach'));
+						$this->db->update('investor');
+					}else{
+						$this->db->set('jumlah_investor', $t_investorG3);
+						$this->db->set('pendapatan', $tpendapatanG3);
+						$this->db->where('id', $this->input->post('id'));
+						$this->db->update('investor');
+					}
+// ****************************************************************************
 
 					$this->db->set('jumlah_investor', $t_investorG3);
 					$this->db->set('pendapatan', $tpendapatanG2);
@@ -301,10 +396,41 @@ class Member extends CI_Controller {
 					$tpendapatanG4 = $t_investorG4 * 300000;
 
 					// Update data Investor
-					$this->db->set('jumlah_investor', $t_investorG4);
-					$this->db->set('pendapatan', $tpendapatanG4);
-					$this->db->where('id', $this->input->post('id'));
-					$this->db->update('investor');
+// ***************************** NEW FUNCTION ***************************************
+					// Update data Investor
+					if($coach['role_id']=='3'){
+						$this->db->set('jumlah_investor', $t_investorG4);
+						$this->db->set('pendapatan', $tpendapatanG4);
+						$this->db->set('tunjanganCoach', 'tunjanganCoach + 400000', FALSE);
+						$this->db->where('id', $this->input->post('id'));
+						$this->db->update('investor');
+
+						$tunjanganDirect = 5/100 * 700000;
+						$this->db->set('tunjanganCoach', "tunjanganCoach + $tunjanganDirect",FALSE);
+						$this->db->where('id', $this->input->post('id_grade3'));
+						$this->db->update('investor');
+
+						$tunjanganDirect1 = 5/100 * 100000;
+						$this->db->set('tunjanganCoach', "tunjanganCoach + $tunjanganDirect1", FALSE);
+						$this->db->where('id', $this->input->post('id_grade2'));
+						$this->db->update('investor');
+
+						$tunjanganDirect2 = 5/100 * 50000;
+						$this->db->set('tunjanganCoach', "tunjanganCoach + $tunjanganDirect2", FALSE);
+						$this->db->where('id', $this->input->post('id_grade1'));
+						$this->db->update('investor');
+
+						$tunjanganDirect3 = 5/100 * 25000;
+						$this->db->set('tunjanganCoach', "tunjanganCoach + $tunjanganDirect3", FALSE);
+						$this->db->where('id', $this->input->post('link_coach'));
+						$this->db->update('investor');
+					}else{
+						$this->db->set('jumlah_investor', $t_investorG4);
+						$this->db->set('pendapatan', $tpendapatanG4);
+						$this->db->where('id', $this->input->post('id'));
+						$this->db->update('investor');
+					}
+// ****************************************************************************
 
 					$this->db->set('jumlah_investor', $t_investorG4);
 					$this->db->set('pendapatan', $tpendapatanG3);
@@ -337,11 +463,46 @@ class Member extends CI_Controller {
 					$tpendapatanG4 = $t_investorG5 * 100000;
 					$tpendapatanG5 = $t_investorG5 * 300000;
 
+// ***************************** NEW FUNCTION ***************************************
 					// Update data Investor
-					$this->db->set('jumlah_investor', $t_investorG5);
-					$this->db->set('pendapatan', $tpendapatanG5);
-					$this->db->where('id', $this->input->post('id'));
-					$this->db->update('investor');
+					if($coach['role_id']=='3'){
+						$this->db->set('jumlah_investor', $t_investorG5);
+						$this->db->set('pendapatan', $tpendapatanG5);
+						$this->db->set('tunjanganCoach', 'tunjanganCoach + 400000', FALSE);
+						$this->db->where('id', $this->input->post('id'));
+						$this->db->update('investor');
+
+						$tunjanganDirect = 5/100 * 700000;
+						$this->db->set('tunjanganCoach', "tunjanganCoach + $tunjanganDirect",FALSE);
+						$this->db->where('id', $this->input->post('id_grade4'));
+						$this->db->update('investor');
+
+						$tunjanganDirect1 = 5/100 * 100000;
+						$this->db->set('tunjanganCoach', "tunjanganCoach + $tunjanganDirect1", FALSE);
+						$this->db->where('id', $this->input->post('id_grade3'));
+						$this->db->update('investor');
+
+						$tunjanganDirect2 = 5/100 * 50000;
+						$this->db->set('tunjanganCoach', "tunjanganCoach + $tunjanganDirect2", FALSE);
+						$this->db->where('id', $this->input->post('id_grade2'));
+						$this->db->update('investor');
+
+						$tunjanganDirect3 = 5/100 * 25000;
+						$this->db->set('tunjanganCoach', "tunjanganCoach + $tunjanganDirect3", FALSE);
+						$this->db->where('id', $this->input->post('id_grade1'));
+						$this->db->update('investor');
+
+						$tunjanganDirect4 = 5/100 * 12500;
+						$this->db->set('tunjanganCoach' ,"tunjanganCoach + $tunjanganDirect4", FALSE);
+						$this->db->where('id', $this->input->post('link_coach'));
+						$this->db->update('investor');
+					}else{
+						$this->db->set('jumlah_investor', $t_investorG5);
+						$this->db->set('pendapatan', $tpendapatanG5);
+						$this->db->where('id', $this->input->post('id'));
+						$this->db->update('investor');
+					}
+// ****************************************************************************
 
 					$this->db->set('jumlah_investor', $t_investorG5);
 					$this->db->set('pendapatan', $tpendapatanG4);
@@ -350,7 +511,7 @@ class Member extends CI_Controller {
 
 					$this->db->set('jumlah_investor', $t_investorG5);
 					$this->db->set('pendapatan', $tpendapatanG3);
-					$this->db->where('id', $this->input->post('id_grarde3'));
+					$this->db->where('id', $this->input->post('id_grade3'));
 					$this->db->update('investor');
 
 					$this->db->set('jumlah_investor', $t_investorG5);
@@ -360,39 +521,41 @@ class Member extends CI_Controller {
 				}
 
 			// Konfigurasi email
-			// $this->load->library('email');
-			// $this->load->helper('cookie');
+			$this->load->library('email');
+			$this->load->helper('cookie');
 
-			// $mail_cookie   = $this->input->post('email');
-			// $token_cookie  = $password;
+			$mail_cookie   = $this->input->post('email');
+			$token_cookie  = $password;
 	
-			// $config['protocol']    = 'smtp';
-			// $config['smtp_host']    = 'ssl://mail2.daunbiru.com';
-			// $config['smtp_port']    = '465';
-			// $config['smtp_user']    = 'notification@gac.com';
-			// $config['smtp_pass']    = 'diesel';
-			// $config['charset']    = 'utf-8';
-			// $config['newline']    = "\r\n";
-			// $config['mailtype'] = 'html'; // text or html
-			// $config['validation'] = TRUE; // bool whether to validate email or not      
+			$config['protocol']    = 'smtp';
+			$config['smtp_host']    = 'ssl://mail2.daunbiru.com';
+			$config['smtp_port']    = '465';
+			$config['smtp_user']    = 'notification@gac.com';
+			$config['smtp_pass']    = 'diesel';
+			$config['charset']    = 'utf-8';
+			$config['newline']    = "\r\n";
+			$config['mailtype'] = 'html'; // text or html
+			$config['validation'] = TRUE; // bool whether to validate email or not      
 	
-			// $this->email->initialize($config);
+			$this->email->initialize($config);
 	
-			// $this->email->from('notification@gac.com', 'Gemesin Asia Charts');
-			// $this->email->to($mail_cookie); 
+			$this->email->from('notification@gac.com', 'Gemesin Asia Charts');
+			$this->email->to($mail_cookie); 
 	
-			// $this->email->subject("Terima kasih, Pendaftaran anda telah berhasil");
-			// $this->email->message("Dear ".$this->input->post('nama') ."<p>ID anda : ".$id."<p><p>Password anda : <b>cuan</b><p>Silahkan klik  link berikut <a href='http://[::1]/gac-aci/' target='_blank'>Gemesin Asia Charts</a>");  
+			$this->email->subject("Terima kasih, Pendaftaran anda telah berhasil");
+			$this->email->message("<p>Silahkan Melakukan Pembayaran degan Biaya Komunitas Sebesar Rp.1.300.".substr($this->input->post('phone'),-3)."</p>Dear ".$this->input->post('nama') ."<p>ID anda : ".$id."<p><p>Password anda : <b>cuan</b><p>Silahkan klik  link berikut <a href='http://[::1]/gac-aci/' target='_blank'>Gemesin Asia Charts</a>");  
 	
-			// if ($this->email->send()) {
-			// 	echo 'Email sent.';
-			//   //  delete_cookie("mail_cookie");
+			if ($this->email->send()) {
+				echo 'Email sent.';
+			  //  delete_cookie("mail_cookie");
 	
-			// } else {
-			// 	show_error($this->email->print_debugger());
-			// }
+			} else {
+				show_error($this->email->print_debugger());
+			}
 		$this->session->set_flashdata('message', 'daftar');
         redirect('member/index/');
 	}
 
 }
+
+

@@ -73,7 +73,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" data-scroll="true" data-id="#traiders" href="<?= base_url(); ?>#traiders">
-              Trider 
+              Trader 
             </a>
           </li>
           <li class="nav-item">
@@ -459,8 +459,8 @@
       <div class="container">
         <div class="row">
           <div class="col-md-8 ml-auto mr-auto text-center">
-            <h2 class="title">Trider Berpengalaman di Bidangnya</h2>
-            <h5 class="description">Dengan dibantu oleh Trider yang handal membuat pengalaman belajar anda lebih mudah.</h5>
+            <h2 class="title">Trader Berpengalaman di Bidangnya</h2>
+            <h5 class="description">Dengan dibantu oleh Trader yang handal membuat pengalaman belajar anda lebih mudah.</h5>
           </div>
         </div>
         <div class="space-top"></div>
@@ -476,7 +476,7 @@
                 <a href="#paper-kit">
                   <div class="author">
                     <h4 class="card-title">Wahyu Hidayat Santoso</h4>
-                    <h6 class="card-category text-muted">Trider</h6>
+                    <h6 class="card-category text-muted">Trader</h6>
                   </div>
                 </a>
                 <!-- <p class="card-description text-center">
@@ -496,7 +496,7 @@
                 <a href="#paper-kit">
                   <div class="author">
                     <h4 class="card-title">Bryan</h4>
-                    <h6 class="card-category text-muted">Trider</h6>
+                    <h6 class="card-category text-muted">Trader</h6>
                   </div>
                 </a>
                 <!-- <p class="card-description text-center">
@@ -516,7 +516,7 @@
                 <a href="#paper-kit">
                   <div class="author">
                     <h4 class="card-title">Helmi Wibowo</h4>
-                    <h6 class="card-category text-muted">Trider</h6>
+                    <h6 class="card-category text-muted">Trader</h6>
                   </div>
                 </a>
                 <!-- <p class="card-description text-center">
@@ -536,7 +536,7 @@
                 <a href="#paper-kit">
                   <div class="author">
                     <h4 class="card-title">Iksan Santoso</h4>
-                    <h6 class="card-category text-muted">Trider</h6>
+                    <h6 class="card-category text-muted">Trader</h6>
                   </div>
                 </a>
                 <!-- <p class="card-description text-center">
@@ -556,7 +556,7 @@
                 <a href="#paper-kit">
                   <div class="author">
                     <h4 class="card-title">Irvan Febrinata</h4>
-                    <h6 class="card-category text-muted">Trider</h6>
+                    <h6 class="card-category text-muted">Trader</h6>
                   </div>
                 </a>
                 <!-- <p class="card-description text-center">
@@ -576,7 +576,7 @@
                 <a href="#paper-kit">
                   <div class="author">
                     <h4 class="card-title">Choiril Pamungkas</h4>
-                    <h6 class="card-category text-muted">Trider</h6>
+                    <h6 class="card-category text-muted">Trader</h6>
                   </div>
                 </a>
                 <!-- <p class="card-description text-center">
@@ -635,7 +635,7 @@
                   </div>
                 </div>
                 <div class="col-md-6 col-mb-2 mr-auto">
-                  <form role="form" id="contact-form" method="post"  action="<?= base_url('beranda/daftar'); ?>">
+                  <form role="form" id="contact-form" method="post"  action="<?= base_url('beranda/pendaftaran'); ?>">
                     <div class="card-body">
                       <div class="form-group label-floating">
                           <label class="control-label">Id Coach*</label>
@@ -751,7 +751,7 @@
       <li>
         <a href="#traiders" data-number="5">
           <span class="cd-dot"></span>
-          <span class="cd-label">Trider</span>
+          <span class="cd-label">Trader</span>
         </a>
       </li>
       <li>
